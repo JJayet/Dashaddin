@@ -12,13 +12,38 @@ document.addEventListener('DOMContentLoaded', function() {
       return dom.querySelector("label[for='" + id + "']");
     }
 
-    function getContextWithoutLabel(input) {
+    function getContextForAriaLabel(input) {
       var ariaLabel = input.getAttribute("aria-label");
       if (ariaLabel !== '') {
         return ariaLabel;
       } else {
-        return '???';
+        return '';
       }
+    }
+
+    function getContextWithinRow(input, tr) {
+      var tds = tr.children;
+      var result = '???';
+      [].forEach.call(tds, function(td){
+        if(td.children[0] !== input)
+          result = td.children[0].innerText;
+      });
+      return result;
+    }
+
+    function getContextWithoutInfo(input, currentElem) {
+      if (currentElem === null) {
+        return '???';
+      } else if(currentElem.tagName === 'TR') {
+        return getContextWithinRow(input, currentElem);
+      } else {
+        return getContextWithoutInfo(input, currentElem.parentNode);
+      }
+    }
+
+    function getContextWithoutLabel(input) {
+      var ariaLabel = getContextForAriaLabel(input);
+      return ariaLabel === null ? getContextWithoutInfo(input, input) : ariaLabel;
     }
 
     function getContextForInput(input) {
