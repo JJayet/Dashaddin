@@ -44,27 +44,31 @@ document.addEventListener('DOMContentLoaded', function() {
       var textToUse =
         input.id === '' ? input.name.toLowerCase() : input.id.toLowerCase();
 
-      var user = getContextUsingArray(textToUse, userTerms, 'UserName');
-      var company = getContextUsingArray(textToUse, companyTerms, 'Company');
-      var address = getContextUsingArray(textToUse, addressTerms, 'Address');
-      var zip = getContextUsingArray(textToUse, zipTerms, 'Zip Code');
-      var city = getContextUsingArray(textToUse, cityTerms, 'City');
-      var state = getContextUsingArray(textToUse, stateTerms, 'State');
-
-      if(user !== '???')
-        return user;
-      else if(company !== '???')
-        return company;
-      else if(address !== '???')
-        return address;
-      else if(zip !== '???')
-        return zip;
-      else if(city !== '???')
-        return city;
-      else if(state !== '???')
-        return state;
-      else
+      if (textToUse === '')
         return '???';
+      else {
+        var user = getContextUsingArray(textToUse, userTerms, 'UserName');
+        var company = getContextUsingArray(textToUse, companyTerms, 'Company');
+        var address = getContextUsingArray(textToUse, addressTerms, 'Address');
+        var zip = getContextUsingArray(textToUse, zipTerms, 'Zip Code');
+        var city = getContextUsingArray(textToUse, cityTerms, 'City');
+        var state = getContextUsingArray(textToUse, stateTerms, 'State');
+
+        if(user !== '???')
+          return user;
+        else if(company !== '???')
+          return company;
+        else if(address !== '???')
+          return address;
+        else if(zip !== '???')
+          return zip;
+        else if(city !== '???')
+          return city;
+        else if(state !== '???')
+          return state;
+        else
+          return '???';
+      }
     }
 
     function getLabelForId(id) {
@@ -72,7 +76,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function getInputs() {
-      var textInputs = dom.querySelectorAll('input:not([type="radio"]):not([type="hidden"]):not([type="checkbox"]):not([type="submit"])');
+      var textInputs = dom.querySelectorAll('input:not([type="radio"]):not([type="hidden"]):not([type="checkbox"]):not([type="button"]):not([type="submit"])');
       var knownContextTextDiv = document.createElement('div');
       var unknownContextTextDiv = document.createElement('div');
 
