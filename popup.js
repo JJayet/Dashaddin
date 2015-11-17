@@ -1,8 +1,12 @@
 document.addEventListener('DOMContentLoaded', function() {
   chrome.tabs.getSelected(null, function(tab) {
     var dom;
-    var pwdTerms = ['password', 'pass', 'pwd'];
     var userTerms = ['e-mail', 'email', 'user', 'username'];
+    var addressTerms = ['address'];
+    var companyTerms = ['company', 'corporation', 'corp'];
+    var zipTerms = ['zip', 'postal'];
+    var cityTerms = ['city', 'town'];
+    var stateTerms = ['state'];
 
     function getInputsAndContext(domContent) {
       dom = document.createElement('div');
@@ -15,20 +19,56 @@ document.addEventListener('DOMContentLoaded', function() {
         return {input : input, context : 'Password'};
       }
       else if (input.type === 'email') {
-        return {input : input, context : "Email"};
+        return {input : input, context : 'Email'};
       }
       else if (input.type === 'tel') {
-        return {input : input, context : "Phone Number"};
+        return {input : input, context : 'Phone Number'};
       }
-      return {input : input, context : "???"};
+      else {
+        return {input : input, context : getContextWithoutLabel(input)};
+      }
+    }
+
+    function getContextUsingArray(textToUse, arrayToCheckFrom, associatedResult) {
+      var result = '???';
+      arrayToCheckFrom.forEach(function(toCompare) {
+        if (toCompare.toLowerCase().indexOf(textToUse) > -1)
+          result = associatedResult;
+        else if (textToUse.toLowerCase().indexOf(toCompare) > -1)
+          result = associatedResult;
+      });
+      return result;
+    }
+
+    function getContextWithoutLabel(input) {
+      var textToUse =
+        input.id === '' ? input.name.toLowerCase() : input.id.toLowerCase();
+
+      var user = getContextUsingArray(textToUse, userTerms, 'UserName');
+      var company = getContextUsingArray(textToUse, companyTerms, 'Company');
+      var address = getContextUsingArray(textToUse, addressTerms, 'Address');
+      var zip = getContextUsingArray(textToUse, zipTerms, 'Zip Code');
+      var city = getContextUsingArray(textToUse, cityTerms, 'City');
+      var state = getContextUsingArray(textToUse, stateTerms, 'State');
+
+      if(user !== '???')
+        return user;
+      else if(company !== '???')
+        return company;
+      else if(address !== '???')
+        return address;
+      else if(zip !== '???')
+        return zip;
+      else if(city !== '???')
+        return city;
+      else if(state !== '???')
+        return state;
+      else
+        return '???';
     }
 
     function getLabelForId(id) {
-      console.log(dom.querySelector("label[for='" + id + "']"));
-    }
-
-    function getContextFromInputs(inputs) {
-
+      return dom.querySelector("label[for='" + id + "']");
     }
 
     function getInputs() {
