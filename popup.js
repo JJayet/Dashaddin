@@ -11,8 +11,14 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function getContextForInput(input) {
-      if(input.type == "password") {
-        return {input : input, context : "Password"};
+      if(input.type === 'password') {
+        return {input : input, context : 'Password'};
+      }
+      else if (input.type === 'email') {
+        return {input : input, context : "Email"};
+      }
+      else if (input.type === 'tel') {
+        return {input : input, context : "Phone Number"};
       }
       return {input : input, context : "???"};
     }
@@ -26,20 +32,25 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function getInputs() {
-      var textInputs = dom.querySelectorAll('input:not([type="radio"]):not([type="hidden"])');
-      var textDiv = document.createElement('div');
+      var textInputs = dom.querySelectorAll('input:not([type="radio"]):not([type="hidden"]):not([type="checkbox"]):not([type="submit"])');
+      var knownContextTextDiv = document.createElement('div');
+      var unknownContextTextDiv = document.createElement('div');
 
       [].forEach.call(textInputs, function(elem) {
         var inputAndContext = getContextForInput(elem);
         var text = document.createTextNode(inputAndContext.input.outerHTML + ", " + inputAndContext.context);
-        textDiv.appendChild(text);
-        textDiv.appendChild(document.createElement('br'));
+        if (inputAndContext.context === '???') {
+          unknownContextTextDiv.appendChild(text);
+          unknownContextTextDiv.appendChild(document.createElement('br'));
+        } else {
+          knownContextTextDiv.appendChild(text);
+          knownContextTextDiv.appendChild(document.createElement('br'));
+        }
       });
 
-      var textTitle = document.createElement('h2');
-      textTitle.innerHTML = "Inputs"
-      document.body.appendChild(textTitle);
-      document.body.appendChild(textDiv);
+      document.body.appendChild(knownContextTextDiv);
+      document.body.appendChild(document.createElement('br'));
+      document.body.appendChild(unknownContextTextDiv);
     }
 
     chrome.tabs.sendMessage(tab.id, {text: 'report_back'}, getInputsAndContext);
